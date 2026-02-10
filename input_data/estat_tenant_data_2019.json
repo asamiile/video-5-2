@@ -1,0 +1,21 @@
+{
+  "GET_STATS_DATA": {
+    "RESULT": {
+      "STATUS": 300,
+      "ERROR_MSG": "統計表ID（statsDataId）=[0003417742]のデータは存在しません。IDを確認して下さい。",
+      "DATE": "2026-01-24T00:29:33.918+09:00"
+    },
+    "PARAMETER": {
+      "LANG": "J",
+      "STATS_DATA_ID": "0003417742",
+      "DATA_FORMAT": "J",
+      "START_POSITION": 1,
+      "METAGET_FLG": "Y",
+      "EXPLANATION_GET_FLG": "Y",
+      "ANNOTATION_GET_FLG": "Y",
+      "REPLACE_SP_CHARS": 0,
+      "CNT_GET_FLG": "N",
+      "SECTION_HEADER_FLG": 1
+    }
+  }
+}
