@@ -11,7 +11,7 @@ import {
   LINES_PER_PAGE,
 } from "./constants";
 import { Oscilloscope } from "./Oscilloscope";
-import { FONT_FAMILY } from "./font";
+import { FONT_FAMILY_IBM_PLEX } from "../helpers/fonts";
 import { WaitForFonts } from "./WaitForFonts";
 import { AudiogramCompositionSchemaType } from "./schema";
 
@@ -52,7 +52,7 @@ export const Audiogram: React.FC<AudiogramCompositionSchemaType> = ({
             color: "white",
             padding: "48px",
             backgroundColor: "black",
-            fontFamily: FONT_FAMILY,
+            fontFamily: FONT_FAMILY_IBM_PLEX,
           }}
         >
           <div

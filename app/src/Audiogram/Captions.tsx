@@ -9,7 +9,7 @@ import {
   layoutText,
 } from "./get-number-of-lines-for-text";
 import { CAPTIONS_FONT_SIZE } from "./constants";
-import { FONT_FAMILY } from "./font";
+import { FONT_FAMILY_IBM_PLEX } from "../helpers/fonts";
 
 const useWindowedFrameCaptions = ({
   captions,
@@ -63,7 +63,7 @@ export const PaginatedCaptions: React.FC<{
     return layoutText({
       captions: currentSentence,
       textBoxWidth,
-      fontFamily: FONT_FAMILY,
+      fontFamily: FONT_FAMILY_IBM_PLEX,
       fontSize: CAPTIONS_FONT_SIZE,
     });
   }, [currentSentence, textBoxWidth]);

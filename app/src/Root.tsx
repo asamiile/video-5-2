@@ -2,6 +2,9 @@ import "./index.css";
 import { Composition, staticFile } from "remotion";
 import { Audiogram } from "./Audiogram/Main";
 import { audiogramSchema } from "./Audiogram/schema";
+import { LocationTemplate } from "./LocationOverlay/LocationTemplate";
+import { locationSchema } from "./LocationOverlay/location-schema";
+import { locationConfigs, defaultLocationProps } from "./LocationOverlay/location-config";
 import { getSubtitles } from "./helpers/fetch-captions";
 import { FPS } from "./helpers/ms-to-frame";
 import { parseMedia } from "@remotion/media-parser";
@@ -62,6 +65,25 @@ export const RemotionRoot: React.FC = () => {
           };
         }}
       />
+      
+      {/* 地名コンポジション（複数自動生成） */}
+      {locationConfigs.map((config) => (
+        <Composition
+          key={config.id}
+          id={config.id}
+          component={LocationTemplate}
+          width={1920}
+          height={1080}
+          fps={FPS}
+          durationInFrames={300}
+          schema={locationSchema}
+          defaultProps={{
+            ...defaultLocationProps,
+            locationName: config.locationName,
+            fontSize: config.fontSize,
+          }}
+        />
+      ))}
     </>
   );
 };
