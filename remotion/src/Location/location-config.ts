@@ -35,7 +35,7 @@ export const defaultLocationProps = {
   positionY: 90,
   fontFamily: FONT_FAMILY_LINE_SEED,
   fontWeight: "400" as const,
-  animationDurationFrames: 5,
+  animationDurationFrames: 90, // 3科
   slideInDistance: 25,
   delayDurationFrames: 0, // アニメーション遅延
   fadeInDurationFrames: msToFrame(500), // フェードイン期間

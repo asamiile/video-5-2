@@ -20,7 +20,7 @@ export const locationSchema = z.object({
   fontWeight: z.enum(["400", "700"]).default("700"),
   
   // アニメーション設定
-  animationDurationFrames: z.number().min(1).default(15), // フレーム数（30fpsで0.5秒）
+  animationDurationFrames: z.number().min(1).default(90), // フレーム数（ィ30fpsけ1科1秒）
   slideInDistance: z.number().min(0).max(500).default(100), // スライドイン距離（px）
   delayDurationFrames: z.number().min(0).default(30), // 遫枠（フレーム数）
   fadeInDurationFrames: z.number().min(1).default(9), // フェードイン期間（フレーム数）  
