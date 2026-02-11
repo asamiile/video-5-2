@@ -1,12 +1,7 @@
 {
   "folders": [
     {
-      "path": "remotion",
-      "name": "Remotion"
-    },
-    {
-      "path": "research",
-      "name": "Research"
+      "path": "."
     }
   ],
   "settings": {
