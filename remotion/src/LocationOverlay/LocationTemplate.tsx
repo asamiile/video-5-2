@@ -1,6 +1,7 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { LocationSchemaType } from "./location-schema";
+import { PlaceholderImage } from "../PlaceholderImage";
 
 export const LocationTemplate: React.FC<LocationSchemaType> = ({
   locationName,
@@ -35,6 +36,20 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
         // backgroundColor: "transparent",
       }}
     >
+      {/* 背景画像 */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+        }}
+      >
+        <PlaceholderImage />
+      </div>
+
       {/* 地名テキスト */}
       <div
         style={{
@@ -45,6 +60,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
           padding: showBackground ? "20px 40px" : "0",
           // backgroundColor: showBackground ? backgroundColor : "transparent",
           // backdropFilter: showBackground ? "blur(4px)" : "none",
+          zIndex: 2,
         }}
       >
         <h1
@@ -74,6 +90,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
           transformOrigin: "left center",
           display: "flex",
           alignItems: "center",
+          zIndex: 2,
         }}
       />
       
@@ -89,6 +106,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
           borderRadius: "50%",
           transform: "translate(-50%, -50%)",
           opacity: lineProgress > 0 ? 1 : 0,
+          zIndex: 2,
         }}
       />
     </AbsoluteFill>

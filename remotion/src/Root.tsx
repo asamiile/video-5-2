@@ -5,6 +5,7 @@ import { audiogramSchema } from "./Audiogram/schema";
 import { LocationTemplate } from "./LocationOverlay/LocationTemplate";
 import { locationSchema } from "./LocationOverlay/location-schema";
 import { locationConfigs, defaultLocationProps } from "./LocationOverlay/location-config";
+import { PlaceholderImage } from "./PlaceholderImage";
 import { getSubtitles } from "./helpers/fetch-captions";
 import { FPS } from "./helpers/ms-to-frame";
 import { parseMedia } from "@remotion/media-parser";
@@ -64,6 +65,16 @@ export const RemotionRoot: React.FC = () => {
             fps: FPS,
           };
         }}
+      />
+      
+      {/* 仮置き画像 */}
+      <Composition
+        id="PlaceholderImage"
+        component={PlaceholderImage}
+        width={1920}
+        height={1080}
+        fps={FPS}
+        durationInFrames={300}
       />
       
       {/* 地名コンポジション（複数自動生成） */}
