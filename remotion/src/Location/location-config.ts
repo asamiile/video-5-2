@@ -12,6 +12,10 @@ export const locationConfigs = [
     locationName: "ONE FUKUOKA BLDG",
   },
   {
+    id: "Location-InabaConstruction",
+    locationName: "因幡町通り工事現場",
+  },
+  {
     id: "Location-HurricSquare",
     locationName: "ヒューリックスクエア福岡天神",
   },

@@ -107,6 +107,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
     fontWeight: fontWeight as any,
     lineHeight: 1.2,
     whiteSpace: "nowrap",
+    textShadow: "0px 4px 20px rgba(107, 99, 84, 0.25)",
   };
 
   const circleElementStyle: React.CSSProperties = {
@@ -119,6 +120,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
     borderRadius: "50%",
     transform: "translate(-50%, -50%)",
     opacity: elementOpacity,
+    boxShadow: "0px 4px 12px 8px rgba(107, 99, 84, 0.25)",
   };
 
   const lineElementStyle: React.CSSProperties = {
@@ -132,6 +134,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
     display: "flex",
     alignItems: "center",
     opacity: elementOpacity,
+    boxShadow: "0px 4px 12px 8px rgba(107, 99, 84, 0.25)",
   };
 
   return (
