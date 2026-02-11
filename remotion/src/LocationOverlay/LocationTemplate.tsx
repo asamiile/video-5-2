@@ -1,7 +1,26 @@
 import React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from "remotion";
 import { LocationSchemaType } from "./location-schema";
 import { PlaceholderImage } from "../PlaceholderImage";
+
+// アニメーション進度計算関数
+const createAnimationProgress = (
+  frame: number,
+  startFrame: number,
+  duration: number,
+  easing?: any
+) => {
+  return interpolate(
+    frame,
+    [startFrame, startFrame + duration],
+    [0, 1],
+    { 
+      extrapolateLeft: 'clamp', 
+      extrapolateRight: 'clamp',
+      ...(easing && { easing })
+    }
+  );
+};
 
 export const LocationTemplate: React.FC<LocationSchemaType> = ({
   locationName,
@@ -9,23 +28,111 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
   textColor,
   backgroundColor,
   showBackground,
+  textPaddingX,
+  textPaddingY,
+  lineHeight,
+  lineMaxWidth,
+  lineSpacing,
+  circleSize,
   positionX,
   positionY,
   fontFamily,
   fontWeight,
   animationDurationFrames,
   slideInDistance,
+  delayDurationFrames,
+  fadeInDurationFrames,
 }) => {
   const frame = useCurrentFrame();
   
-  // テキストスライドインアニメーション計算
-  const textProgress = Math.min(frame / animationDurationFrames, 1);
-  const translateXValue = slideInDistance * (1 - textProgress);
+  const circleOffsetX = circleSize * 1.5;
+  const verticalCenter = fontSize / 2 + lineSpacing;
+  
+  // フェードイン計算
+  const opacity = createAnimationProgress(
+    frame,
+    delayDurationFrames,
+    fadeInDurationFrames
+  );
+  
+  // テキストスライドインアニメーション
+  const slideStartFrame = 0;
+  const slideProgress = createAnimationProgress(
+    frame,
+    slideStartFrame,
+    animationDurationFrames
+  );
 
-  // 線のスライドインアニメーション計算（テキスト完了後に開始）
-  const lineDelayFrames = animationDurationFrames;
-  const lineProgress = Math.max(0, Math.min((frame - lineDelayFrames) / animationDurationFrames, 1));
-  const lineWidth = 100 * lineProgress;
+  const easedSlideProgress = interpolate(
+    slideProgress,
+    [0, 1],
+    [0, 1],
+    { easing: Easing.out(Easing.quad) }
+  );
+  const translateXValue = slideInDistance * (1 - easedSlideProgress);
+
+  // 線のアニメーション計算
+  const lineDelayFrames = 0;
+  const lineProgress = createAnimationProgress(
+    frame,
+    lineDelayFrames,
+    animationDurationFrames,
+    Easing.out(Easing.quad)
+  );
+  const lineWidth = lineMaxWidth * lineProgress;
+  
+  // 共通オパシティロジック
+  const elementOpacity = Math.max(opacity, lineProgress > 0 ? 1 : 0);
+
+  // スタイル定義
+  const absoluteBaseStyle: React.CSSProperties = {
+    position: "absolute",
+    zIndex: 2,
+  };
+
+  const textContainerStyle: React.CSSProperties = {
+    ...absoluteBaseStyle,
+    left: `${positionX}%`,
+    top: `${positionY}%`,
+    transform: `translate(calc(-${translateXValue}px), -50%)`,
+    padding: showBackground ? `${textPaddingY}px ${textPaddingX}px` : "0",
+    opacity: opacity,
+  };
+
+  const textHeadingStyle: React.CSSProperties = {
+    margin: 0,
+    fontSize: `${fontSize}px`,
+    color: textColor,
+    fontFamily: fontFamily,
+    fontWeight: fontWeight as any,
+    lineHeight: 1.2,
+    whiteSpace: "nowrap",
+  };
+
+  const circleElementStyle: React.CSSProperties = {
+    ...absoluteBaseStyle,
+    left: `calc(${positionX}% - ${circleOffsetX}px)`,
+    top: `calc(${positionY}% + ${verticalCenter}px)`,
+    width: `${circleSize}px`,
+    height: `${circleSize}px`,
+    backgroundColor: backgroundColor,
+    borderRadius: "50%",
+    transform: "translate(-50%, -50%)",
+    opacity: elementOpacity,
+  };
+
+  const lineElementStyle: React.CSSProperties = {
+    ...absoluteBaseStyle,
+    left: `${positionX}%`,
+    top: `calc(${positionY}% + ${verticalCenter}px - ${lineHeight / 2}px)`,
+    width: `${lineWidth}px`,
+    height: `${lineHeight}px`,
+    backgroundColor: backgroundColor,
+    transformOrigin: "left center",
+    display: "flex",
+    alignItems: "center",
+    opacity: elementOpacity,
+  };
 
   return (
     <AbsoluteFill
@@ -33,7 +140,6 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        // backgroundColor: "transparent",
       }}
     >
       {/* 背景画像 */}
@@ -51,64 +157,17 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
       </div>
 
       {/* 地名テキスト */}
-      <div
-        style={{
-          position: "absolute",
-          left: `${positionX}%`,
-          top: `${positionY}%`,
-          transform: `translate(calc(-${translateXValue}px), -50%)`,
-          padding: showBackground ? "20px 40px" : "0",
-          // backgroundColor: showBackground ? backgroundColor : "transparent",
-          // backdropFilter: showBackground ? "blur(4px)" : "none",
-          zIndex: 2,
-        }}
-      >
-        <h1
-          style={{
-            margin: 0,
-            fontSize: `${fontSize}px`,
-            color: textColor,
-            fontFamily: fontFamily,
-            fontWeight: fontWeight as any,
-            lineHeight: 1.2,
-            whiteSpace: "nowrap",
-          }}
-        >
+      <div style={textContainerStyle}>
+        <h1 style={textHeadingStyle}>
           {locationName}
         </h1>
       </div>
 
-      {/* 線アニメーション */}
-      <div
-        style={{
-          position: "absolute",
-          left: `${positionX}%`,
-          top: `calc(${positionY}% + ${fontSize / 2 + 20}px)`,
-          width: `${lineWidth}px`,
-          height: "3px",
-          backgroundColor: backgroundColor,
-          transformOrigin: "left center",
-          display: "flex",
-          alignItems: "center",
-          zIndex: 2,
-        }}
-      />
-      
       {/* 円要素 */}
-      <div
-        style={{
-          position: "absolute",
-          left: `calc(${positionX}% - 8px)`,
-          top: `calc(${positionY}% + ${fontSize / 2 + 20}px)`,
-          width: "16px",
-          height: "16px",
-          backgroundColor: backgroundColor,
-          borderRadius: "50%",
-          transform: "translate(-50%, -50%)",
-          opacity: lineProgress > 0 ? 1 : 0,
-          zIndex: 2,
-        }}
-      />
+      <div style={circleElementStyle} />
+
+      {/* 線アニメーション */}
+      <div style={lineElementStyle} />
     </AbsoluteFill>
   );
 };

@@ -1,38 +1,44 @@
 // 地名設定の配列
 import { fontFamily as FONT_FAMILY_LINE_SEED } from "@remotion/google-fonts/LineSeedJP";
+import { msToFrame } from "../helpers/ms-to-frame";
 
 export const locationConfigs = [
   {
     id: "LocationOverlay-TenjinBlickCross",
     locationName: "天神ブリッククロス",
-    fontSize: 36,
   },
   {
     id: "LocationOverlay-OneFukuoka",
     locationName: "ONE FUKUOKA BLDG",
-    fontSize: 36,
   },
   {
     id: "LocationOverlay-HurricSquare",
     locationName: "ヒューリックスクエア福岡天神",
-    fontSize: 36,
   },
   {
     id: "LocationOverlay-Daimei",
     locationName: "大名ガーデンシティ",
-    fontSize: 36,
   },
 ];
 
 // 共通のデフォルトプロパティ
 export const defaultLocationProps = {
-  textColor: "rgba(255, 255, 255, 1)",
+  fontSize: 36,
+  textColor: "rgb(195, 192, 187)",
   backgroundColor: "rgb(195, 192, 187)",
   showBackground: true,
   positionX: 5,
   positionY: 90,
   fontFamily: FONT_FAMILY_LINE_SEED,
   fontWeight: "400" as const,
-  animationDurationFrames: 8,
-  slideInDistance: 300,
+  animationDurationFrames: 5,
+  slideInDistance: 25,
+  delayDurationFrames: 0, // アニメーション遅延
+  fadeInDurationFrames: msToFrame(500), // フェードイン期間
+  textPaddingX: 0,
+  textPaddingY: 20,
+  lineHeight: 4,
+  lineMaxWidth: 504,
+  lineSpacing: 20,
+  circleSize: 12,
 };

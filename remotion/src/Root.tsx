@@ -91,7 +91,6 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{
             ...defaultLocationProps,
             locationName: config.locationName,
-            fontSize: config.fontSize,
           }}
         />
       ))}
