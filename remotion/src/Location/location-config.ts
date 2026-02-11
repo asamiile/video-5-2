@@ -4,7 +4,7 @@ import { msToFrame } from "../helpers/ms-to-frame";
 
 export const locationConfigs = [
   {
-    id: "Location-TenjinBlickCross",
+    id: "Location-TenjinBrickCross",
     locationName: "天神ブリッククロス",
   },
   {
@@ -20,7 +20,7 @@ export const locationConfigs = [
     locationName: "ヒューリックスクエア福岡天神",
   },
   {
-    id: "Location-Daimei",
+    id: "Location-DaimyoGardenCity",
     locationName: "大名ガーデンシティ",
   },
 ];

@@ -2,10 +2,13 @@ import "./index.css";
 import { Composition, staticFile } from "remotion";
 import { Audiogram } from "./Audiogram/Main";
 import { audiogramSchema } from "./Audiogram/schema";
-import { LocationTemplate } from "./LocationOverlay/LocationTemplate";
-import { locationSchema } from "./LocationOverlay/location-schema";
-import { locationConfigs, defaultLocationProps } from "./LocationOverlay/location-config";
+import { LocationTemplate } from "./Location/LocationTemplate";
+import { locationSchema } from "./Location/location-schema";
+import { locationConfigs, defaultLocationProps } from "./Location/location-config";
 import { PlaceholderImage } from "./PlaceholderImage";
+import { MiniMap } from "./Map/MiniMap";
+import { miniMapSchema } from "./Map/mini-map-schema";
+import { defaultMiniMapProps, mapLocationPoints } from "./Map/mini-map-config";
 import { getSubtitles } from "./helpers/fetch-captions";
 import { FPS } from "./helpers/ms-to-frame";
 import { parseMedia } from "@remotion/media-parser";
@@ -76,8 +79,26 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         durationInFrames={300}
       />
+
+      {/* Mini Map コンポジション */}
+      {mapLocationPoints.map((location) => (
+        <Composition
+          key={location.id}
+          id={`MiniMap-${location.id}`}
+          component={MiniMap}
+          width={1920}
+          height={1080}
+          fps={FPS}
+          durationInFrames={300}
+          schema={miniMapSchema}
+          defaultProps={{
+            ...defaultMiniMapProps,
+            mapLocationId: location.id,
+          }}
+        />
+      ))}
       
-      {/* 地名コンポジション（複数自動生成） */}
+      {/* 地名コンポジション */}
       {locationConfigs.map((config) => (
         <Composition
           key={config.id}

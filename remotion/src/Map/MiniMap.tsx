@@ -1,0 +1,294 @@
+import React, { useEffect, useRef, useMemo } from "react";
+import {
+  AbsoluteFill,
+  useDelayRender,
+  useVideoConfig,
+  useCurrentFrame,
+  interpolate,
+  Easing,
+} from "remotion";
+import mapboxgl, { Map } from "mapbox-gl";
+import "mapbox-gl/dist/mapbox-gl.css";
+import { MiniMapSchemaType } from "./mini-map-schema";
+import {
+  mapLocationPoints,
+  defaultMapCameraConfig,
+  mapboxMapOptions,
+  defaultMiniMapProps,
+} from "./mini-map-config";
+import { PlaceholderImage } from "../PlaceholderImage";
+
+// Mapbox トークン設定
+mapboxgl.accessToken = process.env.REMOTION_MAPBOX_TOKEN as string;
+
+export const MiniMap: React.FC<MiniMapSchemaType> = ({
+  mapLocationId,
+  width,
+  height,
+  positionX,
+  positionY,
+  enableCameraAnimation,
+  showMarker,
+  markerColor,
+  markerSize,
+  fadeInDuration,
+  fadeOutDuration,
+  delayFrames,
+  borderRadius,
+  boxShadow,
+}) => {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<Map | null>(null);
+  const frame = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const { delayRender, continueRender } = useDelayRender();
+
+  // 地点情報の取得
+  const locationPoint = useMemo(() => {
+    return mapLocationPoints.find((point) => point.id === mapLocationId);
+  }, [mapLocationId]);
+
+  // フェードイン/アウトの計算
+  const fadeProgress = useMemo(() => {
+    if (frame < delayFrames) return 0;
+
+    // フェードイン期間
+    if (frame < delayFrames + fadeInDuration) {
+      return interpolate(
+        frame,
+        [delayFrames, delayFrames + fadeInDuration],
+        [0, 1],
+        {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: Easing.out(Easing.ease),
+        }
+      );
+    }
+
+    // フェードアウト期間
+    const fadeOutStartFrame = durationInFrames - fadeOutDuration;
+    if (frame >= fadeOutStartFrame) {
+      return interpolate(
+        frame,
+        [fadeOutStartFrame, durationInFrames],
+        [1, 0],
+        {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: Easing.in(Easing.ease),
+        }
+      );
+    }
+
+    return 1;
+  }, [frame, delayFrames, fadeInDuration, fadeOutDuration, durationInFrames]);
+
+  // マップ初期化
+  useEffect(() => {
+    if (!mapContainer.current || !locationPoint) return;
+
+    const handle = delayRender("Loading map...");
+
+    const _map = new Map({
+      container: mapContainer.current,
+      ...mapboxMapOptions,
+      center: [locationPoint.longitude, locationPoint.latitude],
+      zoom: locationPoint.zoom || defaultMapCameraConfig.initialZoom,
+      pitch: locationPoint.pitch || defaultMapCameraConfig.initialPitch,
+      bearing: locationPoint.bearing || defaultMapCameraConfig.initialBearing,
+    });
+
+    _map.on("load", () => {
+      // マーカー（カスタムアイコン）の追加
+      if (showMarker) {
+        // カスタムマーカーアイコンを作成
+        const canvas = document.createElement("canvas");
+        canvas.width = defaultMiniMapProps.markerCanvasSize;
+        canvas.height = defaultMiniMapProps.markerCanvasSize;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.fillStyle = markerColor;
+          ctx.fillRect(0, 0, defaultMiniMapProps.markerCanvasSize, defaultMiniMapProps.markerCanvasSize);
+          ctx.strokeStyle = defaultMiniMapProps.markerStrokeColor;
+          ctx.lineWidth = defaultMiniMapProps.markerStrokeWidth;
+          ctx.strokeRect(0, 0, defaultMiniMapProps.markerCanvasSize, defaultMiniMapProps.markerCanvasSize);
+          const imageData = ctx.getImageData(
+            0,
+            0,
+            defaultMiniMapProps.markerCanvasSize,
+            defaultMiniMapProps.markerCanvasSize
+          );
+          _map.addImage("marker-square", imageData);
+        }
+
+        // マーカーソースとレイヤーを追加
+        _map.addSource("marker", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [locationPoint.longitude, locationPoint.latitude],
+            },
+            properties: {},
+          },
+        });
+
+        _map.addLayer({
+          id: "marker-square",
+          type: "symbol",
+          source: "marker",
+          layout: {
+            "icon-image": "marker-square",
+            "icon-size": markerSize / 10,
+            "icon-rotate": defaultMiniMapProps.markerIconRotate,
+            "icon-allow-overlap": true,
+          },
+          paint: {
+            "icon-opacity": defaultMiniMapProps.markerIconOpacity,
+          },
+        });
+      }
+
+      map.current = _map;
+    });
+
+    return () => {
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, [locationPoint, delayRender, continueRender, showMarker, markerColor, markerSize]);
+
+  // カメラアニメーション
+  useEffect(() => {
+    if (!map.current || !enableCameraAnimation || !locationPoint) return;
+
+    const animationStartFrame = delayFrames + fadeInDuration;
+    const animationEndFrame = animationStartFrame + defaultMapCameraConfig.cameraAnimationDuration;
+
+    if (frame >= animationStartFrame && frame < animationEndFrame) {
+      const progress = interpolate(
+        frame,
+        [animationStartFrame, animationEndFrame],
+        [0, 1],
+        {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: Easing.inOut(Easing.cubic),
+        }
+      );
+
+      const currentZoom =
+        (locationPoint.zoom || defaultMapCameraConfig.initialZoom) +
+        (defaultMapCameraConfig.targetZoom - (locationPoint.zoom || defaultMapCameraConfig.initialZoom)) * progress;
+      const currentPitch =
+        (locationPoint.pitch || defaultMapCameraConfig.initialPitch) +
+        (defaultMapCameraConfig.targetPitch - (locationPoint.pitch || defaultMapCameraConfig.initialPitch)) * progress;
+      const currentBearing =
+        (locationPoint.bearing || defaultMapCameraConfig.initialBearing) +
+        (defaultMapCameraConfig.targetBearing - (locationPoint.bearing || defaultMapCameraConfig.initialBearing)) * progress;
+
+      map.current.flyTo({
+        zoom: currentZoom,
+        pitch: currentPitch,
+        bearing: currentBearing,
+        duration: 0,
+      });
+    }
+  }, [
+    frame,
+    enableCameraAnimation,
+    locationPoint,
+    delayFrames,
+    fadeInDuration,
+  ]);
+
+  // コンテナのレイアウト計算
+  const containerStyle: React.CSSProperties = useMemo(
+    () => ({
+      position: "relative",
+      width: `${width}px`,
+      height: `${height}px`,
+      borderRadius: `${borderRadius}px`,
+      boxShadow: boxShadow,
+      overflow: "hidden",
+      opacity: fadeProgress,
+    }),
+    [width, height, borderRadius, boxShadow, fadeProgress]
+  );
+
+  // コンテナを中央に配置するためのラッパースタイル
+  const wrapperStyle: React.CSSProperties = useMemo(
+    () => ({
+      position: "absolute",
+      left: `${positionX}%`,
+      top: `${positionY}%`,
+      transform: "translate(-50%, -50%)",
+      border: defaultMiniMapProps.border,
+      padding: defaultMiniMapProps.padding,
+      borderRadius: `${borderRadius}px`,
+    }),
+    [positionX, positionY, borderRadius]
+  );
+
+  if (!locationPoint) {
+    return (
+      <AbsoluteFill>
+        <div style={wrapperStyle}>
+          <div style={containerStyle}>
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#f0f0f0",
+                color: "#666",
+              }}
+            >
+              Map location "{mapLocationId}" not found
+            </div>
+          </div>
+        </div>
+      </AbsoluteFill>
+    );
+  }
+
+  return (
+    <AbsoluteFill>
+      {/* 背景画像 */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+        }}
+      >
+        <PlaceholderImage />
+      </div>
+
+      {/* Mini Map コンテナ */}
+      <div style={wrapperStyle}>
+        <div style={containerStyle}>
+          {/* Mapbox マップ */}
+          <div
+            ref={mapContainer}
+            style={{
+              width: "100%",
+              height: "100%",
+              position: "relative",
+              zIndex: 1,
+            }}
+          />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
