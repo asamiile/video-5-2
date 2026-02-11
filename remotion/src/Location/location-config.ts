@@ -4,19 +4,19 @@ import { msToFrame } from "../helpers/ms-to-frame";
 
 export const locationConfigs = [
   {
-    id: "LocationOverlay-TenjinBlickCross",
+    id: "Location-TenjinBlickCross",
     locationName: "天神ブリッククロス",
   },
   {
-    id: "LocationOverlay-OneFukuoka",
+    id: "Location-OneFukuoka",
     locationName: "ONE FUKUOKA BLDG",
   },
   {
-    id: "LocationOverlay-HurricSquare",
+    id: "Location-HurricSquare",
     locationName: "ヒューリックスクエア福岡天神",
   },
   {
-    id: "LocationOverlay-Daimei",
+    id: "Location-Daimei",
     locationName: "大名ガーデンシティ",
   },
 ];
