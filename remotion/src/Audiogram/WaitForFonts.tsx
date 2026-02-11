@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { cancelRender, useDelayRender } from "remotion";
-import { waitForFonts } from "../helpers/fonts";
+import { waitForFonts } from "./font";
 
 // Use this component to only mount components once all fonts are loaded
 export const WaitForFonts: React.FC<{

@@ -24,7 +24,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
   // 線のスライドインアニメーション計算（テキスト完了後に開始）
   const lineDelayFrames = animationDurationFrames;
   const lineProgress = Math.max(0, Math.min((frame - lineDelayFrames) / animationDurationFrames, 1));
-  const lineHeight = 100 * lineProgress;
+  const lineWidth = 100 * lineProgress;
 
   return (
     <AbsoluteFill
@@ -32,7 +32,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "transparent",
+        // backgroundColor: "transparent",
       }}
     >
       {/* 地名テキスト */}
@@ -43,8 +43,8 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
           top: `${positionY}%`,
           transform: `translate(calc(-${translateXValue}px), -50%)`,
           padding: showBackground ? "20px 40px" : "0",
-          backgroundColor: showBackground ? backgroundColor : "transparent",
-          backdropFilter: showBackground ? "blur(4px)" : "none",
+          // backgroundColor: showBackground ? backgroundColor : "transparent",
+          // backdropFilter: showBackground ? "blur(4px)" : "none",
         }}
       >
         <h1
@@ -66,13 +66,29 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
       <div
         style={{
           position: "absolute",
-          left: `calc(${positionX}% + 1px)`,
+          left: `${positionX}%`,
           top: `calc(${positionY}% + ${fontSize / 2 + 20}px)`,
-          width: "3px",
-          height: `${lineHeight}px`,
+          width: `${lineWidth}px`,
+          height: "3px",
           backgroundColor: backgroundColor,
-          transformOrigin: "top center",
-          transform: "translateX(-1px)",
+          transformOrigin: "left center",
+          display: "flex",
+          alignItems: "center",
+        }}
+      />
+      
+      {/* 円要素 */}
+      <div
+        style={{
+          position: "absolute",
+          left: `calc(${positionX}% - 8px)`,
+          top: `calc(${positionY}% + ${fontSize / 2 + 20}px)`,
+          width: "16px",
+          height: "16px",
+          backgroundColor: backgroundColor,
+          borderRadius: "50%",
+          transform: "translate(-50%, -50%)",
+          opacity: lineProgress > 0 ? 1 : 0,
         }}
       />
     </AbsoluteFill>
