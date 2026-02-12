@@ -45,7 +45,7 @@ export const mapLocationPoints: MapLocationPoint[] = [
 // デフォルトカメラ設定
 export const defaultMapCameraConfig = {
   // 初期状态の値
-  initialZoom: 14,
+  initialZoom: 4,
   initialPitch: 0,
   initialBearing: 0,
   
@@ -75,7 +75,7 @@ export const defaultMiniMapProps = {
   enableCameraAnimation: true,
   showMarker: true,
   markerColor: "#B27873",
-  markerSize: 16,
+  markerSize: 12,
   markerCanvasSize: 24,
   markerStrokeColor: "#B27873",
   markerStrokeWidth: 1,

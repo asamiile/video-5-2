@@ -16,7 +16,7 @@ import {
   mapboxMapOptions,
   defaultMiniMapProps,
 } from "./mini-map-config";
-import { PlaceholderImage } from "../PlaceholderImage";
+// import { PlaceholderImage } from "../PlaceholderImage";
 
 // Mapbox トークン設定
 mapboxgl.accessToken = process.env.REMOTION_MAPBOX_TOKEN as string;
@@ -86,20 +86,30 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
 
   // マップ初期化
   useEffect(() => {
-    if (!mapContainer.current || !locationPoint) return;
-
-    const handle = delayRender("Loading map...");
-
-    const _map = new Map({
-      container: mapContainer.current,
-      ...mapboxMapOptions,
-      center: [locationPoint.longitude, locationPoint.latitude],
-      zoom: locationPoint.zoom || defaultMapCameraConfig.initialZoom,
-      pitch: locationPoint.pitch || defaultMapCameraConfig.initialPitch,
-      bearing: locationPoint.bearing || defaultMapCameraConfig.initialBearing,
+    console.log("MiniMap useEffect called", { 
+      mapContainerCurrent: !!mapContainer.current, 
+      locationPoint 
     });
+    
+    if (!mapContainer.current || !locationPoint) {
+      console.log("Early return - container or location missing");
+      return;
+    }
 
-    _map.on("load", () => {
+    try {
+      console.log("Creating Mapbox map...");
+      const _map = new Map({
+        container: mapContainer.current,
+        ...mapboxMapOptions,
+        center: [locationPoint.longitude, locationPoint.latitude],
+        zoom: locationPoint.zoom || defaultMapCameraConfig.initialZoom,
+        pitch: locationPoint.pitch || defaultMapCameraConfig.initialPitch,
+        bearing: locationPoint.bearing || defaultMapCameraConfig.initialBearing,
+      });
+
+      console.log("Map created, waiting for load event...");
+      _map.on("load", () => {
+        console.log("Map load event fired");
       // マーカー（カスタムアイコン）の追加
       if (showMarker) {
         // カスタムマーカーアイコンを作成
@@ -152,7 +162,11 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
       }
 
       map.current = _map;
-    });
+      });
+    } catch (error) {
+      console.error("Error in MiniMap useEffect:", error);
+      throw error;
+    }
 
     return () => {
       if (map.current) {
@@ -160,7 +174,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
         map.current = null;
       }
     };
-  }, [locationPoint, delayRender, continueRender, showMarker, markerColor, markerSize]);
+  }, [locationPoint, showMarker, markerColor, markerSize]);
 
   // カメラアニメーション
   useEffect(() => {
@@ -246,7 +260,6 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                backgroundColor: "#f0f0f0",
                 color: "#666",
               }}
             >
@@ -261,7 +274,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
   return (
     <AbsoluteFill>
       {/* 背景画像 */}
-      <div
+      {/* <div
         style={{
           position: "absolute",
           top: 0,
@@ -272,7 +285,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
         }}
       >
         <PlaceholderImage />
-      </div>
+      </div> */}
 
       {/* Mini Map コンテナ */}
       <div style={wrapperStyle}>
