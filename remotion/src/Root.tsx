@@ -102,7 +102,7 @@ export const RemotionRoot: React.FC = () => {
       {locationConfigs.map((config) => (
         <Composition
           key={config.id}
-          id={config.id}
+          id={`Location-${config.id}`}
           component={LocationTemplate}
           width={1920}
           height={1080}

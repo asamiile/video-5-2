@@ -1,26 +1,27 @@
 // 地名設定の配列
 import { msToFrame } from "../helpers/ms-to-frame";
-const LINESEED_FONT = "'Line Seed JP_100', sans-serif";
+import { fontFamily as FONT_FAMILY_LINE_SEED } from "@remotion/google-fonts/LineSeedJP";
+// const LINESEED_FONT = "'Line Seed JP_100', sans-serif";
 
 export const locationConfigs = [
   {
-    id: "Location-TenjinBrickCross",
+    id: "TenjinBrickCross",
     locationName: "天神ブリッククロス",
   },
   {
-    id: "Location-OneFukuoka",
+    id: "OneFukuoka",
     locationName: "ONE FUKUOKA BLDG",
   },
   {
-    id: "Location-InabaConstruction",
+    id: "InabaConstruction",
     locationName: "因幡町通り工事現場",
   },
   {
-    id: "Location-HurricSquare",
+    id: "HurricSquare",
     locationName: "ヒューリックスクエア福岡天神",
   },
   {
-    id: "Location-DaimyoGardenCity",
+    id: "DaimyoGardenCity",
     locationName: "大名ガーデンシティ",
   },
 ];
@@ -33,7 +34,8 @@ export const defaultLocationProps = {
   showBackground: true,
   positionX: 5,
   positionY: 90,
-  fontFamily: LINESEED_FONT,
+  // fontFamily: LINESEED_FONT,
+  fontFamily: FONT_FAMILY_LINE_SEED,
   fontWeight: "400" as const,
   animationDurationFrames: 90, // 3秒
   slideInDistance: 25,

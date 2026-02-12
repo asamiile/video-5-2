@@ -11,31 +11,31 @@ export interface MapLocationPoint {
 
 export const mapLocationPoints: MapLocationPoint[] = [
   {
-    id: "MiniMap-TenjinBrickCross",
+    id: "TenjinBrickCross",
     name: "天神ブリッククロス",
     latitude: 33.59280493802063,
     longitude: 130.40067973150843,
   },
   {
-    id: "MiniMap-OneFukuoka",
+    id: "OneFukuoka",
     name: "ONE FUKUOKA BLDG",
     latitude: 33.59135241138666,
     longitude: 130.3994274097612,
   },
   {
-    id: "MiniMap-InabaConstruction",
+    id: "InabaConstruction",
     name: "因幡町通り工事現場",
     latitude: 33.59119047991814,
     longitude: 130.40023221822273,
   },
   {
-    id: "MiniMap-HurricSquare",
+    id: "HurricSquare",
     name: "ヒューリックスクエア福岡天神",
     latitude: 33.59117379781744,
     longitude: 130.39754663124276,
   },
   {
-    id: "MiniMap-DaimyoGardenCity",
+    id: "DaimyoGardenCity",
     name: "大名ガーデンシティ",
     latitude: 33.59000266421397,
     longitude: 130.39476381775071,
