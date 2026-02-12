@@ -77,7 +77,7 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         fps={FPS}
-        durationInFrames={300}
+        durationInFrames={1800}
       />
 
       {/* Mini Map コンポジション */}
@@ -89,7 +89,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={FPS}
-          durationInFrames={300}
+          durationInFrames={1800}
           schema={miniMapSchema}
           defaultProps={{
             ...defaultMiniMapProps,
@@ -107,7 +107,7 @@ export const RemotionRoot: React.FC = () => {
           width={1920}
           height={1080}
           fps={FPS}
-          durationInFrames={300}
+          durationInFrames={1800}
           schema={locationSchema}
           defaultProps={{
             ...defaultLocationProps,

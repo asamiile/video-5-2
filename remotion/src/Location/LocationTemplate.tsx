@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from "remotion";
 import { LocationSchemaType } from "./location-schema";
-import { PlaceholderImage } from "../PlaceholderImage";
+// import { PlaceholderImage } from "../PlaceholderImage";
 
 // アニメーション進度計算関数
 const createAnimationProgress = (
@@ -145,8 +145,8 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
         justifyContent: "center",
       }}
     >
-      {/* 背景画像 */}
-      <div
+      {/* 背景画像 - 透明背景ビデオ用に非表示 */}
+      {/* <div
         style={{
           position: "absolute",
           top: 0,
@@ -157,7 +157,7 @@ export const LocationTemplate: React.FC<LocationSchemaType> = ({
         }}
       >
         <PlaceholderImage />
-      </div>
+      </div> */}
 
       {/* 地名テキスト */}
       <div style={textContainerStyle}>
