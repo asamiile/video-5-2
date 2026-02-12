@@ -8,6 +8,10 @@
 import { Config } from "@remotion/cli/config";
 import { enableTailwind } from '@remotion/tailwind-v4';
 
-Config.setVideoImageFormat("jpeg");
+// 透明背景ビデオエクスポート設定
+Config.setVideoImageFormat("png");
+Config.setPixelFormat("yuva444p10le");
+Config.setCodec("prores");
+Config.setProResProfile("4444");
 Config.setOverwriteOutput(true);
 Config.overrideWebpackConfig(enableTailwind);
