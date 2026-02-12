@@ -16,7 +16,7 @@ export const locationSchema = z.object({
   positionY: z.number().default(50), // パーセンテージ
   
   // フォント設定
-  fontFamily: z.string().default("LINE Seed JP"),
+  fontFamily: z.string().default("'Line Seed JP_100', sans-serif"),
   fontWeight: z.enum(["400", "700"]).default("700"),
   
   // アニメーション設定
