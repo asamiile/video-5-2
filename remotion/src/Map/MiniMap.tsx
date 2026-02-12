@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo } from "react";
+import React, { useEffect, useRef, useMemo, useState } from "react";
 import {
   AbsoluteFill,
   useDelayRender,
@@ -42,6 +42,9 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
   const { delayRender, continueRender } = useDelayRender();
+  const [delayHandle] = useState(() =>
+    delayRender("Mapbox tiles loading..."),
+  );
 
   // 地点情報の取得
   const locationPoint = useMemo(() => {
@@ -109,59 +112,61 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
 
       console.log("Map created, waiting for load event...");
       _map.on("load", () => {
-        console.log("Map load event fired");
-      // マーカー（カスタムアイコン）の追加
-      if (showMarker) {
-        // カスタムマーカーアイコンを作成
-        const canvas = document.createElement("canvas");
-        canvas.width = defaultMiniMapProps.markerCanvasSize;
-        canvas.height = defaultMiniMapProps.markerCanvasSize;
-        const ctx = canvas.getContext("2d");
-        if (ctx) {
-          ctx.fillStyle = markerColor;
-          ctx.fillRect(0, 0, defaultMiniMapProps.markerCanvasSize, defaultMiniMapProps.markerCanvasSize);
-          ctx.strokeStyle = defaultMiniMapProps.markerStrokeColor;
-          ctx.lineWidth = defaultMiniMapProps.markerStrokeWidth;
-          ctx.strokeRect(0, 0, defaultMiniMapProps.markerCanvasSize, defaultMiniMapProps.markerCanvasSize);
-          const imageData = ctx.getImageData(
-            0,
-            0,
-            defaultMiniMapProps.markerCanvasSize,
-            defaultMiniMapProps.markerCanvasSize
-          );
-          _map.addImage("marker-square", imageData);
+        console.log("Map load event fired, rendering can begin");
+        continueRender(delayHandle); // Mapboxロード完了をRemotionに通知
+        
+        // マーカー（カスタムアイコン）の追加
+        if (showMarker) {
+          // カスタムマーカーアイコンを作成
+          const canvas = document.createElement("canvas");
+          canvas.width = defaultMiniMapProps.markerCanvasSize;
+          canvas.height = defaultMiniMapProps.markerCanvasSize;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            ctx.fillStyle = markerColor;
+            ctx.fillRect(0, 0, defaultMiniMapProps.markerCanvasSize, defaultMiniMapProps.markerCanvasSize);
+            ctx.strokeStyle = defaultMiniMapProps.markerStrokeColor;
+            ctx.lineWidth = defaultMiniMapProps.markerStrokeWidth;
+            ctx.strokeRect(0, 0, defaultMiniMapProps.markerCanvasSize, defaultMiniMapProps.markerCanvasSize);
+            const imageData = ctx.getImageData(
+              0,
+              0,
+              defaultMiniMapProps.markerCanvasSize,
+              defaultMiniMapProps.markerCanvasSize
+            );
+            _map.addImage("marker-square", imageData);
+          }
+
+          // マーカーソースとレイヤーを追加
+          _map.addSource("marker", {
+            type: "geojson",
+            data: {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [locationPoint.longitude, locationPoint.latitude],
+              },
+              properties: {},
+            },
+          });
+
+          _map.addLayer({
+            id: "marker-square",
+            type: "symbol",
+            source: "marker",
+            layout: {
+              "icon-image": "marker-square",
+              "icon-size": markerSize / 10,
+              "icon-rotate": defaultMiniMapProps.markerIconRotate,
+              "icon-allow-overlap": true,
+            },
+            paint: {
+              "icon-opacity": defaultMiniMapProps.markerIconOpacity,
+            },
+          });
         }
 
-        // マーカーソースとレイヤーを追加
-        _map.addSource("marker", {
-          type: "geojson",
-          data: {
-            type: "Feature",
-            geometry: {
-              type: "Point",
-              coordinates: [locationPoint.longitude, locationPoint.latitude],
-            },
-            properties: {},
-          },
-        });
-
-        _map.addLayer({
-          id: "marker-square",
-          type: "symbol",
-          source: "marker",
-          layout: {
-            "icon-image": "marker-square",
-            "icon-size": markerSize / 10,
-            "icon-rotate": defaultMiniMapProps.markerIconRotate,
-            "icon-allow-overlap": true,
-          },
-          paint: {
-            "icon-opacity": defaultMiniMapProps.markerIconOpacity,
-          },
-        });
-      }
-
-      map.current = _map;
+        map.current = _map;
       });
     } catch (error) {
       console.error("Error in MiniMap useEffect:", error);
@@ -174,7 +179,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
         map.current = null;
       }
     };
-  }, [locationPoint, showMarker, markerColor, markerSize]);
+  }, [locationPoint, showMarker, markerColor, markerSize, delayHandle, continueRender]);
 
   // カメラアニメーション
   useEffect(() => {
