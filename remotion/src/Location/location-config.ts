@@ -1,7 +1,7 @@
 // 地名設定の配列
 import { msToFrame } from "../helpers/ms-to-frame";
-import { fontFamily as FONT_FAMILY_LINE_SEED } from "@remotion/google-fonts/LineSeedJP";
-// const LINESEED_FONT = "'Line Seed JP_100', sans-serif";
+// import { fontFamily as FONT_FAMILY_LINE_SEED } from "@remotion/google-fonts/LineSeedJP";
+const LINESEED_FONT = "'Line Seed JP_100', sans-serif";
 
 export const locationConfigs = [
   {
@@ -34,8 +34,8 @@ export const defaultLocationProps = {
   showBackground: true,
   positionX: 5,
   positionY: 90,
-  // fontFamily: LINESEED_FONT,
-  fontFamily: FONT_FAMILY_LINE_SEED,
+  fontFamily: LINESEED_FONT,
+  // fontFamily: FONT_FAMILY_LINE_SEED,
   fontWeight: "400" as const,
   animationDurationFrames: 90, // 3秒
   slideInDistance: 25,

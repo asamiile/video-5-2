@@ -1,7 +1,7 @@
 import React from "react";
 import { AbsoluteFill, useCurrentFrame, interpolate, Easing } from "remotion";
 import { LocationSchemaType } from "./location-schema";
-// import { PlaceholderImage } from "../PlaceholderImage";
+import { PlaceholderImage } from "../PlaceholderImage";
 
 // アニメーション進度計算関数
 const createAnimationProgress = (

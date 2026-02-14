@@ -6,9 +6,12 @@ import { LocationTemplate } from "./Location/LocationTemplate";
 import { locationSchema } from "./Location/location-schema";
 import { locationConfigs, defaultLocationProps } from "./Location/location-config";
 import { PlaceholderImage } from "./PlaceholderImage";
-import { MiniMap } from "./Map/MiniMap";
+import { MiniMapTemplate } from "./Map/MiniMapTemplate";
 import { miniMapSchema } from "./Map/mini-map-schema";
 import { defaultMiniMapProps, mapLocationPoints } from "./Map/mini-map-config";
+import { LoadingIconTemplate } from "./LoadingIcon/LoadingIconTemplate";
+import { loadingIconSchema } from "./LoadingIcon/loading-icon-schema";
+import { loadingIconPatterns } from "./LoadingIcon/loading-icon-config";
 import { getSubtitles } from "./helpers/fetch-captions";
 import { FPS } from "./helpers/ms-to-frame";
 import { parseMedia } from "@remotion/media-parser";
@@ -70,6 +73,21 @@ export const RemotionRoot: React.FC = () => {
         }}
       />
       
+      {/* LoadingIcon コンポジション */}
+      {Object.entries(loadingIconPatterns).map(([patternId, patternProps]) => (
+        <Composition
+          key={patternId}
+          id={`LoadingIcon-${patternId.charAt(0).toUpperCase() + patternId.slice(1)}`}
+          component={LoadingIconTemplate}
+          width={1920}
+          height={1080}
+          fps={FPS}
+          durationInFrames={1800}
+          schema={loadingIconSchema}
+          defaultProps={patternProps}
+        />
+      ))}
+
       {/* 仮置き画像 */}
       <Composition
         id="PlaceholderImage"
@@ -85,7 +103,7 @@ export const RemotionRoot: React.FC = () => {
         <Composition
           key={location.id}
           id={`MiniMap-${location.id}`}
-          component={MiniMap}
+          component={MiniMapTemplate}
           width={1920}
           height={1080}
           fps={FPS}

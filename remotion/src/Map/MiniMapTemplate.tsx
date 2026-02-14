@@ -21,7 +21,7 @@ import {
 // Mapbox トークン設定
 mapboxgl.accessToken = process.env.REMOTION_MAPBOX_TOKEN as string;
 
-export const MiniMap: React.FC<MiniMapSchemaType> = ({
+export const MiniMapTemplate: React.FC<MiniMapSchemaType> = ({
   mapLocationId,
   width,
   height,
@@ -91,7 +91,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
 
   // マップ初期化
   useEffect(() => {
-    console.log("MiniMap useEffect called", { 
+    console.log("MiniMapTemplate useEffect called", { 
       mapContainerCurrent: !!mapContainer.current, 
       locationPoint 
     });
@@ -112,7 +112,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
         bearing: locationPoint.bearing || defaultMapCameraConfig.initialBearing,
       });
 
-      console.log("Map created, waiting for load event...");
+      console.log("Map load event fired, rendering can begin");
       _map.on("load", () => {
         console.log("Map load event fired, rendering can begin");
         continueRender(delayHandle); // Mapboxロード完了をRemotionに通知
@@ -171,7 +171,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
         map.current = _map;
       });
     } catch (error) {
-      console.error("Error in MiniMap useEffect:", error);
+      console.error("Error in MiniMapTemplate useEffect:", error);
       throw error;
     }
 
