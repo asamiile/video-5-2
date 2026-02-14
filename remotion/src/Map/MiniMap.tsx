@@ -70,11 +70,13 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
     }
 
     // フェードアウト期間
-    const fadeOutStartFrame = durationInFrames - fadeOutDuration;
+    const fadeOutStartFrame = 8.5 * 30; // 8.5秒 = 255フレーム（30fps基準）
+    const fadeOutFrameDuration = 1.5 * 30; // 1.5秒 = 45フレーム（30fps基準）
+    
     if (frame >= fadeOutStartFrame) {
       return interpolate(
         frame,
-        [fadeOutStartFrame, durationInFrames],
+        [fadeOutStartFrame, fadeOutStartFrame + fadeOutFrameDuration],
         [1, 0],
         {
           extrapolateLeft: "clamp",
@@ -85,7 +87,7 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
     }
 
     return 1;
-  }, [frame, delayFrames, fadeInDuration, fadeOutDuration, durationInFrames]);
+  }, [frame, delayFrames, fadeInDuration]);
 
   // マップ初期化
   useEffect(() => {
@@ -249,8 +251,9 @@ export const MiniMap: React.FC<MiniMapSchemaType> = ({
       border: defaultMiniMapProps.border,
       padding: defaultMiniMapProps.padding,
       borderRadius: `${borderRadius}px`,
+      opacity: fadeProgress,
     }),
-    [positionX, positionY, borderRadius]
+    [positionX, positionY, borderRadius, fadeProgress]
   );
 
   if (!locationPoint) {
