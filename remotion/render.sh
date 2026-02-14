@@ -3,12 +3,14 @@
 # Remotion コンポジション レンダリングスクリプト
 # 
 # 使用方法:
-#   chmod +x render
-#   ./render              # すべてのコンポジションを書き出し（デフォルト）
-#   ./render LoadingIcon  # LoadingIcon コンポジションを書き出し
-#   ./render Location     # Location コンポジションを書き出し
-#   ./render MiniMap      # MiniMap コンポジションを書き出し（WebGL required）
-#   ./render all          # すべてのコンポジションを書き出し
+#   chmod +x render.sh
+#   ./render.sh                  # すべてのコンポジションを書き出し（デフォルト）
+#   ./render.sh LoadingIcon      # LoadingIcon コンポジションを書き出し
+#   ./render.sh Location         # Location コンポジションを書き出し
+#   ./render.sh MiniMap          # MiniMap コンポジションを書き出し（WebGL required）
+#   ./render.sh AudioSpectrum    # AudioSpectrum パターンを書き出し
+#   ./render.sh AudioSpectrumFi  # AudioSpectrum（オーディオファイル別）を書き出し
+#   ./render.sh all              # すべてのコンポジションを書き出し
 
 set -e  # エラー時に停止
 
@@ -44,6 +46,15 @@ LOADINGICON_PATTERNS=(
   "LargeWithText"
   "CustomWithText"
 )
+
+# AudioSpectrum パターン一覧
+AUDIOSPECTRUM_PATTERNS=(
+  "Simple"
+  "Detailed"
+)
+
+# AudioSpectrum オーディオディレクトリ
+AUDIOSPECTRUM_AUDIO_DIR="$SCRIPT_DIR/public/audio/AudioSpectrum"
 
 # 色出力用
 RED='\033[0;31m'
@@ -137,6 +148,81 @@ render_minimap() {
   echo -e "${GREEN}✅ All MiniMap compositions rendered successfully!${NC}"
 }
 
+# AudioSpectrum コンポジションを書き出し
+render_audiospectrum() {
+  echo -e "${YELLOW}🎵 Rendering AudioSpectrum compositions...${NC}"
+  echo -e "${YELLOW}⚠️  Note: Ensure audio files are present in remotion/public/audio/${NC}"
+  echo ""
+  
+  for pattern in "${AUDIOSPECTRUM_PATTERNS[@]}"; do
+    echo ""
+    echo -e "${YELLOW}→ AudioSpectrum-${pattern}${NC}"
+    
+    npx remotion render src/index.ts "AudioSpectrum-${pattern}" \
+      "$OUTPUT_DIR/audio-spectrum-${pattern}.mov" \
+      --concurrency=2 \
+      --network-timeout="$NETWORK_TIMEOUT" \
+      --mute-audio \
+      --codec="$CODEC" \
+      --prores-profile="$PRORES_PROFILE" \
+      || {
+        echo -e "${RED}✗ Failed to render AudioSpectrum-${pattern}${NC}"
+        return 1
+      }
+    
+    echo -e "${GREEN}✓ audio-spectrum-${pattern}.mov rendered${NC}"
+  done
+  
+  echo ""
+  echo -e "${GREEN}✅ All AudioSpectrum compositions rendered successfully!${NC}"
+}
+
+# AudioSpectrum コンポジション（オーディオファイル別）を書き出し
+render_audiospectrum_files() {
+  echo -e "${YELLOW}🎵 Rendering AudioSpectrum compositions (audio files)...${NC}"
+  
+  if [ ! -d "$AUDIOSPECTRUM_AUDIO_DIR" ]; then
+    echo -e "${YELLOW}⚠️  Audio directory not found: $AUDIOSPECTRUM_AUDIO_DIR${NC}"
+    echo -e "${YELLOW}   Skipping audio file rendering${NC}"
+    return 0
+  fi
+  
+  # オーディオファイルをループ処理
+  local file_count=0
+  for audio_file in "$AUDIOSPECTRUM_AUDIO_DIR"/*; do
+    if [ -f "$audio_file" ]; then
+      # ファイル名から拡張子を除外
+      filename=$(basename "$audio_file")
+      filename_without_ext="${filename%.*}"
+      
+      echo ""
+      echo -e "${YELLOW}→ AudioSpectrum-${filename_without_ext}${NC}"
+      
+      npx remotion render src/index.ts "AudioSpectrum-${filename_without_ext}" \
+        "$OUTPUT_DIR/audio-spectrum-${filename_without_ext}.mov" \
+        --concurrency=2 \
+        --network-timeout="$NETWORK_TIMEOUT" \
+        --codec="$CODEC" \
+        --prores-profile="$PRORES_PROFILE" \
+        || {
+          echo -e "${RED}✗ Failed to render AudioSpectrum-${filename_without_ext}${NC}"
+          return 1
+        }
+      
+      echo -e "${GREEN}✓ audio-spectrum-${filename_without_ext}.mov rendered${NC}"
+      ((file_count++))
+    fi
+  done
+  
+  if [ $file_count -eq 0 ]; then
+    echo -e "${YELLOW}⚠️  No audio files found in: $AUDIOSPECTRUM_AUDIO_DIR${NC}"
+    return 0
+  fi
+  
+  echo ""
+  echo -e "${GREEN}✅ All AudioSpectrum file compositions rendered successfully! ($file_count files)${NC}"
+}
+
 # メイン処理
 main() {
   case "${1:-all}" in
@@ -149,18 +235,28 @@ main() {
     MiniMap|minimap)
       render_minimap
       ;;
+    AudioSpectrum|audiospectrum)
+      render_audiospectrum
+      ;;
+    AudioSpectrumFiles|audiospectrum-files|audiospectrum_files)
+      render_audiospectrum_files
+      ;;
     all)
       render_loadingicon
       render_location
       render_minimap
+      render_audiospectrum
+      render_audiospectrum_files
       ;;
     *)
-      echo "Usage: $0 [LoadingIcon|Location|MiniMap|all]"
+      echo "Usage: $0 [LoadingIcon|Location|MiniMap|AudioSpectrum|AudioSpectrumFiles|all]"
       echo ""
-      echo "  LoadingIcon  Render all LoadingIcon compositions"
-      echo "  Location     Render all Location compositions"
-      echo "  MiniMap      Render all MiniMap compositions (WebGL required)"
-      echo "  all          Render all compositions (default)"
+      echo "  LoadingIcon        Render all LoadingIcon compositions"
+      echo "  Location           Render all Location compositions"
+      echo "  MiniMap            Render all MiniMap compositions (WebGL required)"
+      echo "  AudioSpectrum      Render all AudioSpectrum pattern compositions"
+      echo "  AudioSpectrumFiles Render all AudioSpectrum compositions (audio files)"
+      echo "  all                Render all compositions (default)"
       exit 1
       ;;
   esac

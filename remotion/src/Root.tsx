@@ -12,6 +12,9 @@ import { defaultMiniMapProps, mapLocationPoints } from "./Map/mini-map-config";
 import { LoadingIconTemplate } from "./LoadingIcon/LoadingIconTemplate";
 import { loadingIconSchema } from "./LoadingIcon/loading-icon-schema";
 import { loadingIconPatterns } from "./LoadingIcon/loading-icon-config";
+import { AudioSpectrumTemplate } from "./AudioSpectrum/AudioSpectrumTemplate";
+import { audioSpectrumSchema } from "./AudioSpectrum/audio-spectrum-schema";
+import { audioSpectrumPatterns, audioSpectrumAudioFiles, defaultAudioSpectrumProps } from "./AudioSpectrum/audio-spectrum-config";
 import { getSubtitles } from "./helpers/fetch-captions";
 import { FPS } from "./helpers/ms-to-frame";
 import { parseMedia } from "@remotion/media-parser";
@@ -85,6 +88,68 @@ export const RemotionRoot: React.FC = () => {
           durationInFrames={1800}
           schema={loadingIconSchema}
           defaultProps={patternProps}
+        />
+      ))}
+
+      {/* AudioSpectrum パターン コンポジション */}
+      {Object.entries(audioSpectrumPatterns).map(([patternId, patternProps]) => (
+        <Composition
+          key={patternId}
+          id={`AudioSpectrum-${patternId.charAt(0).toUpperCase() + patternId.slice(1)}`}
+          component={AudioSpectrumTemplate}
+          width={1920}
+          height={1080}
+          fps={FPS}
+          schema={audioSpectrumSchema}
+          defaultProps={{
+            ...patternProps,
+            audioFile: `audio/AudioSpectrum/${audioSpectrumAudioFiles[0].filename}`,
+          }}
+          calculateMetadata={async ({ props }) => {
+            const { slowDurationInSeconds } = await parseMedia({
+              src: staticFile(props.audioFile),
+              acknowledgeRemotionLicense: true,
+              fields: {
+                slowDurationInSeconds: true,
+              },
+            });
+
+            return {
+              durationInFrames: Math.floor(slowDurationInSeconds * FPS),
+              fps: FPS,
+            };
+          }}
+        />
+      ))}
+
+      {/* AudioSpectrum コンポジション（オーディオファイル別） */}
+      {audioSpectrumAudioFiles.map((audioFile) => (
+        <Composition
+          key={audioFile.id}
+          id={`AudioSpectrum-${audioFile.id}`}
+          component={AudioSpectrumTemplate}
+          width={1920}
+          height={1080}
+          fps={FPS}
+          schema={audioSpectrumSchema}
+          defaultProps={{
+            ...defaultAudioSpectrumProps,
+            audioFile: `audio/AudioSpectrum/${audioFile.filename}`,
+          }}
+          calculateMetadata={async ({ props }) => {
+            const { slowDurationInSeconds } = await parseMedia({
+              src: staticFile(props.audioFile),
+              acknowledgeRemotionLicense: true,
+              fields: {
+                slowDurationInSeconds: true,
+              },
+            });
+
+            return {
+              durationInFrames: Math.floor(slowDurationInSeconds * FPS),
+              fps: FPS,
+            };
+          }}
         />
       ))}
 
