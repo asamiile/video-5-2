@@ -29,6 +29,12 @@ export const mapLocationPoints: MapLocationPoint[] = [
     longitude: 130.40023221822273,
   },
   {
+    id: "TenjinBusinessCenter",
+    name: "天神ビジネスセンター",
+    latitude: 33.59150145919304,
+    longitude: 130.40061419235556,
+  },
+  {
     id: "HurricSquare",
     name: "ヒューリックスクエア福岡天神",
     latitude: 33.59117379781744,
@@ -70,8 +76,8 @@ export const defaultMiniMapProps = {
   mapLocationId: "map-fukuoka-tenjin",
   width: 340,
   height: 340,
-  positionX: 87,
-  positionY: 77,
+  positionX: 88,
+  positionY: 80,
   enableCameraAnimation: true,
   showMarker: true,
   markerColor: "#B27873",

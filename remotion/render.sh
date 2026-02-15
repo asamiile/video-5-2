@@ -33,6 +33,7 @@ LOCATIONS=(
   "TenjinBrickCross"
   "OneFukuoka"
   "InabaConstruction"
+  "TenjinBusinessCenter"
   "HurricSquare"
   "DaimyoGardenCity"
 )

@@ -17,6 +17,10 @@ export const locationConfigs = [
     locationName: "因幡町通り工事現場",
   },
   {
+    id: "TenjinBusinessCenter",
+    locationName: "天神ビジネスセンター",
+  },
+  {
     id: "HurricSquare",
     locationName: "ヒューリックスクエア福岡天神",
   },
