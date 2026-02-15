@@ -48,9 +48,9 @@ export const defaultIntroProps = {
   descriptionFontSize: 52,
   descriptionFontWeight: "400" as const,
   descriptionLineHeight: 1.8,
-  bottomRightFontSize: 40,
-  bottomRightBottom: 40,
-  bottomRightRight: 60,
+  bottomRightFontSize: 48,
+  bottomRightBottom: 72,
+  bottomRightRight: 100,
   fadeInDuration: msToFrame(4000),
   fadeOutDuration: msToFrame(2000),
 };
