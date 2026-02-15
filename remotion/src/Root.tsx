@@ -15,6 +15,9 @@ import { loadingIconPatterns } from "./LoadingIcon/loading-icon-config";
 import { AudioSpectrumTemplate } from "./AudioSpectrum/AudioSpectrumTemplate";
 import { audioSpectrumSchema } from "./AudioSpectrum/audio-spectrum-schema";
 import { audioSpectrumPatterns, audioSpectrumAudioFiles, defaultAudioSpectrumProps } from "./AudioSpectrum/audio-spectrum-config";
+import { IntroTemplate } from "./Intro/IntroTemplate";
+import { introSchema } from "./Intro/intro-schema";
+import { defaultIntroProps, introScenes } from "./Intro/intro-config";
 import { getSubtitles } from "./helpers/fetch-captions";
 import { FPS } from "./helpers/ms-to-frame";
 import { parseMedia } from "@remotion/media-parser";
@@ -198,6 +201,20 @@ export const RemotionRoot: React.FC = () => {
           }}
         />
       ))}
+
+      {/* Intro コンポジション */}
+      <Composition
+        id="Intro"
+        component={IntroTemplate}
+        width={1920}
+        height={1080}
+        fps={FPS}
+        durationInFrames={introScenes.reduce((total, scene) => total + scene.duration, 0)}
+        schema={introSchema}
+        defaultProps={{
+          ...defaultIntroProps,
+        }}
+      />
     </>
   );
 };

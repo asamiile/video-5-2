@@ -5,6 +5,7 @@
 # 使用方法:
 #   chmod +x render.sh
 #   ./render.sh                  # すべてのコンポジションを書き出し（デフォルト）
+#   ./render.sh Intro            # Intro コンポジションを書き出し
 #   ./render.sh LoadingIcon      # LoadingIcon コンポジションを書き出し
 #   ./render.sh Location         # Location コンポジションを書き出し
 #   ./render.sh MiniMap          # MiniMap コンポジションを書き出し（WebGL required）
@@ -66,6 +67,28 @@ NC='\033[0m' # No Color
 echo -e "${YELLOW}🎬 Remotion Composition Rendering Script${NC}"
 echo "Output directory: $OUTPUT_DIR"
 echo ""
+
+# Intro コンポジションを書き出し
+render_intro() {
+  echo -e "${YELLOW}🎬 Rendering Intro composition...${NC}"
+  echo ""
+  echo -e "${YELLOW}→ Intro${NC}"
+  
+  npx remotion render src/index.ts "Intro" \
+    "$OUTPUT_DIR/Intro.mov" \
+    --concurrency=4 \
+    --network-timeout="$NETWORK_TIMEOUT" \
+    --codec="$CODEC" \
+    --prores-profile="$PRORES_PROFILE" \
+    || {
+      echo -e "${RED}✗ Failed to render Intro${NC}"
+      return 1
+    }
+  
+  echo -e "${GREEN}✓ Intro rendered${NC}"
+  echo ""
+  echo -e "${GREEN}✅ Intro composition rendered successfully!${NC}"
+}
 
 # LoadingIcon コンポジションを書き出し
 render_loadingicon() {
@@ -227,6 +250,9 @@ render_audiospectrum_files() {
 # メイン処理
 main() {
   case "${1:-all}" in
+    Intro|intro)
+      render_intro
+      ;;
     LoadingIcon|loadingicon)
       render_loadingicon
       ;;
@@ -243,6 +269,7 @@ main() {
       render_audiospectrum_files
       ;;
     all)
+      render_intro
       render_loadingicon
       render_location
       render_minimap
@@ -250,8 +277,9 @@ main() {
       render_audiospectrum_files
       ;;
     *)
-      echo "Usage: $0 [LoadingIcon|Location|MiniMap|AudioSpectrum|AudioSpectrumFiles|all]"
+      echo "Usage: $0 [Intro|LoadingIcon|Location|MiniMap|AudioSpectrum|AudioSpectrumFiles|all]"
       echo ""
+      echo "  Intro              Render Intro composition"
       echo "  LoadingIcon        Render all LoadingIcon compositions"
       echo "  Location           Render all Location compositions"
       echo "  MiniMap            Render all MiniMap compositions (WebGL required)"
