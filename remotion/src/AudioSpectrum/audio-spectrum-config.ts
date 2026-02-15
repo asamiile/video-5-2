@@ -15,17 +15,17 @@ export const defaultAudioSpectrumProps = {
   
   // 位置設定
   positionX: 84,
-  positionY: 86,
+  positionY: 10,
 };
 
 export const audioSpectrumPatterns = {
-  // シンプル（デフォルト）
+  // シンプル
   simple: {
     ...defaultAudioSpectrumProps,
     barCount: 16,
   },
   
-  // 詳細（バー数多い）
+  // 詳細
   detailed: {
     ...defaultAudioSpectrumProps,
     barCount: 32,
@@ -34,9 +34,8 @@ export const audioSpectrumPatterns = {
   },
 };
 
-// オーディオファイル設定（public/audio/AudioSpectrum に格納）
-// Locationの locationConfigs と同じく、id と filename のみを定義
-// 新しいオーディオファイルを追加する場合は、ここにエントリを追加してください
+// オーディオファイル設定
+// ファイルはpublic/audio/AudioSpectrum に格納する
 export const audioSpectrumAudioFiles = [
   {
     id: "dialogue",

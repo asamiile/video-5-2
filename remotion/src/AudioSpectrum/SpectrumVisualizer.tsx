@@ -9,9 +9,6 @@ interface SpectrumVisualizerProps {
   containerHeight: number;
   sensitivity: number;
   smoothing: number;
-  useGradient?: boolean;
-  gradientStartColor?: string;
-  gradientEndColor?: string;
 }
 
 export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
@@ -23,9 +20,6 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
   containerHeight,
   sensitivity,
   smoothing,
-  useGradient = false,
-  gradientStartColor = "#DFE2D7",
-  gradientEndColor = "#6B685C",
 }) => {
   // 周波数データを正規化してスケール
   const normalizedFrequencies = useMemo(() => {
@@ -54,9 +48,6 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
     [barCount, barWidth, barGap]
   );
 
-  // グラデーション ID（ユニーク）
-  const gradientId = useGradient ? "spectrum-gradient" : undefined;
-
   return (
     <svg
       width={svgWidth}
@@ -65,16 +56,6 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
       style={{ position: "relative" }}
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* グラデーション定義 */}
-      {useGradient && (
-        <defs>
-          <linearGradient id={gradientId} x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor={gradientStartColor} />
-            <stop offset="100%" stopColor={gradientEndColor} />
-          </linearGradient>
-        </defs>
-      )}
-
       {/* スペクトラムバー */}
       {normalizedFrequencies.map((frequency, index) => {
         const x = index * (barWidth + barGap);
@@ -89,7 +70,7 @@ export const SpectrumVisualizer: React.FC<SpectrumVisualizerProps> = ({
               y={y}
               width={barWidth}
               height={barHeight}
-              fill={useGradient ? `url(#${gradientId})` : barColor}
+              fill={barColor}
               rx={2}
             />
 

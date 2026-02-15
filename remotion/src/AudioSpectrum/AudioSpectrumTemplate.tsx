@@ -79,7 +79,7 @@ export const AudioSpectrumTemplate: React.FC<AudioSpectrumSchemaType> = ({
   return (
     <AbsoluteFill>
       {/* 背景画像 */}
-      <div
+      {/* <div
         style={{
           position: "absolute",
           top: 0,
@@ -90,9 +90,9 @@ export const AudioSpectrumTemplate: React.FC<AudioSpectrumSchemaType> = ({
         }}
       >
         <PlaceholderImage />
-      </div>
+      </div> */}
 
-      {/* audio要素（オフセット対応） */}
+      {/* audio要素（音声確認用） */}
       {/* <Sequence from={-audioOffsetInFrames}>
         <Audio src={staticFile(audioFile)} />
       </Sequence> */}
